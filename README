@@ -1,0 +1,54 @@
+#############################################################################################
+                Instructions to BUILD a NMT system
+#############################################################################################
+
+1) Create a data directory (/home/data) with the following files:
+    train.src
+    train.trg
+    dev.src
+    dev.trg
+
+2) Copy the configuration file from /hltsrv1/software/nematus-master/config.cfg to /home/data
+
+3) Edit the config file (/home/data/config.cfg) to set all relevant parameters 
+
+4) Login to a gpu machine: (if your system runs as expected then you can submit the job with qsub)
+       qlogin -q gpgpu.q -l mf=500G,gpu=1
+
+5) Start training
+       /hltsrv1/software/nematus-master/train.sh /home/data/config.cfg gpuID
+       (where gpuID: {gpu0, gpu1,gpu2,gpu3})
+
+
+#############################################################################################
+
+              Instructions to RESTART the training of an existing NMT system
+
+1) set the flag reload_=True in the configuration file (/home/data/config.cfg)
+2) Follow steps 4 and 5 mentioned above (i.e. qlogin and then start training)
+
+#############################################################################################
+
+              Instructions to DECODE a test file with an existing NMT model
+
+/hltsrv1/software/nematus-master/translate.sh {path-to-model.npz} {test.src} {reference} {gpuID}
+
+1) The decoder uses a beam search size of 12
+2) This command will generate 
+       1) hypothesis file (the MT output) {test.src.ouput}
+       2) word alignment probability file {test.src.output.align}
+       3) clean hypothesis file (the MT output is post-processed to combine the subwords) {test.src.output.postprocessed}
+3) BLEU score is computed between the reference and test.src.output.postprocessed
+
+#############################################################################################
+
+              Instructions on setting up the shell environment
+
+export PYTHONPATH=/hltsrv0/chatterjee/.local/lib/python2.7/site-packages
+
+(This part is in progress)
+
+#############################################################################################
+
+
+
